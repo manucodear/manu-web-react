@@ -1,6 +1,7 @@
 import reactLogo from '../../assets/react.svg'
 import viteLogo from '/vite.svg'
 import './Home.css';
+import { LoginButton, LoginButtonType } from '../../components/LoginButton';
 
 const Home: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const Home: React.FC = () => {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <LoginButton type={LoginButtonType.Reddit}></LoginButton>
     </div>
   );
 };

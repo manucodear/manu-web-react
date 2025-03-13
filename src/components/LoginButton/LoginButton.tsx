@@ -1,0 +1,45 @@
+import { LoginButtonProps } from './LoginButton.types';
+import { LoginButtonType } from './LoginButton.enums';
+import { generatePKCECode, generateRandomState } from '../../utils/random-helper';
+
+const getAuthenticationUri = async (type:LoginButtonType): Promise<string> => {
+  let authUrl: string;
+
+  switch (type) {
+    case LoginButtonType.X:{
+      const clientId = import.meta.env.VITE_X_CLIENT_ID;
+      const redirectUri = `${import.meta.env.VITE_REDIRECT_URI}/${LoginButtonType.X}`;
+      const scope = encodeURIComponent(import.meta.env.VITE_X_SCOPE);
+      const { codeVerifier, codeChallenge, state } = await generatePKCECode();
+      const authenticationUriX = import.meta.env.VITE_X_AUTHENTICATION_URI;
+      sessionStorage.setItem('codeVerifier', codeVerifier);
+      // Construct the authorization URL
+      authUrl = `${authenticationUriX}?&response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+      break;
+    }
+    case LoginButtonType.Reddit: {
+      const clientId = import.meta.env.VITE_REDDIT_CLIENT_ID;
+      const redirectUri = `${import.meta.env.VITE_REDIRECT_URI}/${LoginButtonType.Reddit}`;
+      const scope = encodeURIComponent(import.meta.env.VITE_REDDIT_SCOPE);
+      const stateReddit = await generateRandomState();
+      const authenticationUriReddit = import.meta.env.VITE_REDDIT_AUTHENTICATION_URI;
+      // Construct the authorization URL
+      authUrl = `${authenticationUriReddit}?&response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${stateReddit}&duration=permanent`;
+      break;
+    }
+  }
+  return authUrl;
+}
+
+const LoginButton: React.FC<LoginButtonProps> = ({ type }) => {
+  const onButtonClick = async (type:LoginButtonType) => {
+    const authUrl = await getAuthenticationUri(type);
+    window.location.href = authUrl;
+  }
+
+  return (
+    <button onClick={() => onButtonClick(type)}>Login {type}</button>
+  );
+};
+
+export default LoginButton;

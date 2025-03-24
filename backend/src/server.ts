@@ -27,6 +27,7 @@ app.post('/auth/callback/:type', async (req: Request, res: Response) => {
     let authorizationUri: string | undefined = '';
     
     let requestConfig: AxiosRequestConfig<string> | undefined = undefined;
+    console.log(`/auth/callback with: ${type} as parameter`)
 
     switch (type) {
       case "X": {
@@ -44,6 +45,32 @@ app.post('/auth/callback/:type', async (req: Request, res: Response) => {
           redirect_uri: redirectUri,
           grant_type: 'authorization_code',
           code_verifier: codeVerifier
+        });
+        requestConfig = {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        };
+        break;
+      }
+      case "Microsoft": {
+        const { code } = req.body; // Extract code and code_verifier from the request body
+        console.log('body:', req.body);
+        if (!code) {
+          return res.status(400).send('Authorization code not provided');
+        }
+        // Retrieve values from environment variables
+        const clientId = process.env.MS_CLIENT_ID;
+        const clientSecret = process.env.MS_CLIENT_SECRET;
+        const redirectUri = `${process.env.REDIRECT_URI}/Microsoft`;
+        authorizationUri = process.env.MS_TOKEN_URI;
+        tokenRequestBody = qs.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code: code as string,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code',
+          scope: 'User.Read'
         });
         requestConfig = {
           headers: {

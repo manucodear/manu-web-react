@@ -1,4 +1,5 @@
 export enum LoginButtonType {
     X = 'X',
-    Reddit = "Reddit"
+    Reddit = "Reddit",
+    Microsoft = "Microsoft"
 }

@@ -15,7 +15,7 @@ const AuthCallback: React.FC = () => {
     if (codeParam) {
       setCode(codeParam); // Store the code in state
     } else {
-      setError('Authorization codenot found');
+      setError('Authorization code not found');
     }
   });
 
@@ -33,6 +33,10 @@ const AuthCallback: React.FC = () => {
           break;
         }
         case 'Reddit': {
+          parameter = { code };
+          break;
+        }
+        case 'Microsoft': {
           parameter = { code };
           break;
         }

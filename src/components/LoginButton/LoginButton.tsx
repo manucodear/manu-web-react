@@ -3,10 +3,10 @@ import { LoginButtonType } from './LoginButton.enums';
 import { generatePKCECode, generateRandomState } from '../../utils/random-helper';
 
 const getAuthenticationUri = async (type:LoginButtonType): Promise<string> => {
-  let authUrl: string;
+  let authUrl: string = '';
 
   switch (type) {
-    case LoginButtonType.X:{
+    case LoginButtonType.X: {
       const clientId = import.meta.env.VITE_X_CLIENT_ID;
       const redirectUri = `${import.meta.env.VITE_REDIRECT_URI}/${LoginButtonType.X}`;
       const scope = encodeURIComponent(import.meta.env.VITE_X_SCOPE);
@@ -25,6 +25,15 @@ const getAuthenticationUri = async (type:LoginButtonType): Promise<string> => {
       const authenticationUriReddit = import.meta.env.VITE_REDDIT_AUTHENTICATION_URI;
       // Construct the authorization URL
       authUrl = `${authenticationUriReddit}?&response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${stateReddit}&duration=permanent`;
+      break;
+    }
+    case LoginButtonType.Microsoft: {
+      const clientId = import.meta.env.VITE_MS_CLIENT_ID;
+      const redirectUri = `${import.meta.env.VITE_REDIRECT_URI}/${LoginButtonType.Microsoft}`;
+      const scope = encodeURIComponent(import.meta.env.VITE_MS_SCOPE);
+      const authenticationUriMs = import.meta.env.VITE_MS_AUTHENTICATION_URI;
+      // Construct the authorization URL
+      authUrl = `${authenticationUriMs}?&response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope} offline_access&response_mode=query&duration=permanent`;
       break;
     }
   }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { saveAuthenticationData } from "../../utils/authentication-helper";
 
 const AuthCallback: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
@@ -46,11 +47,13 @@ const AuthCallback: React.FC = () => {
         .post(`http://localhost:4000/auth/callback/${type}`, parameter)
         .then((response) => {
           console.log('response.data', response.data);
-          const access_token = response.data;
+          const { access_token, refresh_token, expires_in } = response.data;
           if (access_token) {
             // Store the access token in localStorage (or sessionStorage)
-            sessionStorage.setItem('access_token', access_token); // or sessionStorage.setItem('access_token', access_token);
+            saveAuthenticationData(type as string, access_token, refresh_token, expires_in);
             console.log('Access token stored:', access_token);
+            console.log('Refresh token stored:', refresh_token);
+            console.log('Expiration:', expires_in);
 
             // Redirect the user to another page (e.g., Dashboard, Home, etc.)
             navigate('/');  // Navigate to the dashboard or any other route

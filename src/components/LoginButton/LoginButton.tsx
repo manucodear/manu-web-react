@@ -33,21 +33,23 @@ const getAuthenticationUri = async (type:LoginButtonType): Promise<string> => {
       const scope = encodeURIComponent(import.meta.env.VITE_MS_SCOPE);
       const authenticationUriMs = import.meta.env.VITE_MS_AUTHENTICATION_URI;
       // Construct the authorization URL
-      authUrl = `${authenticationUriMs}?&response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope} offline_access&response_mode=query&duration=permanent`;
+      authUrl = `${authenticationUriMs}?&response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_mode=query&duration=permanent`;
       break;
     }
   }
   return authUrl;
 }
 
-const LoginButton: React.FC<LoginButtonProps> = ({ type }) => {
+const LoginButton: React.FC<LoginButtonProps> = ({ type, text }) => {
   const onButtonClick = async (type:LoginButtonType) => {
     const authUrl = await getAuthenticationUri(type);
     window.location.href = authUrl;
   }
 
+  const buttonText = text ? text : `Login ${type}`;
+
   return (
-    <button onClick={() => onButtonClick(type)}>Login {type}</button>
+    <button onClick={() => onButtonClick(type)}>{buttonText}</button>
   );
 };
 
